@@ -18,7 +18,9 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 HEADERS  += \
-    texture.h
+    texture.h \
+    collision.h \
+    coords.h
 
 QMAKE_LIBS_OPENGL = -lGL -lglut -lGLU
 
