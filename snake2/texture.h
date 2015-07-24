@@ -13,6 +13,7 @@ using std::cout;
 GLuint  mario_jump; // обьявление текстур тутттттттттттт
 GLuint mario_floor;
 GLuint pipe;
+GLuint wood;
 
 
 struct textura_struct{
