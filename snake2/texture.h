@@ -14,7 +14,11 @@ GLuint  mario_jump; // обьявление текстур тутттттттт�
 GLuint mario_floor;
 GLuint pipe;
 GLuint wood;
-
+GLuint coin1;
+GLuint coin2;
+GLuint coin3;
+GLuint coin4;
+GLuint question;
 
 struct textura_struct{
 int W;
