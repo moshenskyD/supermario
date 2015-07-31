@@ -13,12 +13,14 @@ using std::cout;
 GLuint  mario_jump; // обьявление текстур тутттттттттттт
 GLuint mario_floor;
 GLuint pipe;
+GLuint pipeA;
 GLuint wood;
 GLuint coin1;
 GLuint coin2;
 GLuint coin3;
 GLuint coin4;
 GLuint question;
+GLuint mushroom;
 
 struct textura_struct{
 int W;
@@ -54,7 +56,7 @@ int LoadTexture(char *FileName, GLuint &mar){
   glBindTexture(GL_TEXTURE_2D, mar);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  gluBuild2DMipmaps(GL_TEXTURE_2D, 3, get_textura.W, get_textura.H, GL_RGB, GL_UNSIGNED_BYTE, get_textura.Image);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, 3, get_textura.W, get_textura.H, GL_BGR, GL_UNSIGNED_BYTE, get_textura.Image);
   free(get_textura.Image);
   fclose(F);
 

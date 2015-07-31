@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT += opengl
+QT += opengl openal
 
 
 
@@ -20,7 +20,8 @@ SOURCES += main.cpp
 HEADERS  += \
     texture.h \
     collision.h \
-    coords.h
+    coords.h \
+    text.h
 
 QMAKE_LIBS_OPENGL = -lGL -lglut -lGLU
 
