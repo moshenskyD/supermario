@@ -21,6 +21,9 @@ GLuint coin3;
 GLuint coin4;
 GLuint question;
 GLuint mushroom;
+GLuint enemy1;
+GLuint castle1;
+GLuint block;
 
 struct textura_struct{
 int W;

@@ -13,7 +13,7 @@ using namespace::std;
 
 
 bool waySee = true, jumpFlag = false;
-int jumpCount = 250, coinCount = 0;
+int enemyWayCount = 0;
 
 void keyboardS (int numKey, int x, int y){
         switch (numKey){
@@ -47,6 +47,7 @@ void keyboardS (int numKey, int x, int y){
     }
 
 void Draw (){
+
     glClear(GL_COLOR_BUFFER_BIT);
     glColor4f(1.0, 1.0, 1.0, 0.5);
     glEnable(GL_TEXTURE_2D);
@@ -54,13 +55,19 @@ void Draw (){
     glPushMatrix();
     glBegin(GL_POLYGON);
 
+    if (healthCount >= 0 && (goLeft - speed + 64) <= castle[0].getX()){
     if (mario2pipeLeft() == true){
         goLeft-=distancemario2pipe;
     }
     if (mario2pipeRight() == true){
         goLeft+=distancemario2pipe;
     }
+    if (pick () == true){
+        jumpCount = 250; // прекращаем прыжок
 
+        //goUp += distancemario2pipe;  //не работает, подпрыгивание прямо под бокс
+    }
+    glBindTexture(GL_TEXTURE_2D, mario_jump);
         if (waySee == true){
             glTexCoord2d(0, 0);}else{glTexCoord2d(1, 0);} glVertex2f(goLeft - speed + 0.0,goUp + 0.0);
         if (waySee == true){
@@ -203,18 +210,25 @@ void Draw (){
 
     for (int i = 0;i < arrEnemySize; i++){//враги
         if (arrEnemy[i].getUsed() == 0){
-            glBindTexture(GL_TEXTURE_2D, mushroom);
+            glBindTexture(GL_TEXTURE_2D, enemy1);
             glBegin (GL_POLYGON);
+            if (enemyWayCount <= 12){
                 glTexCoord2d(0, 0); glVertex2d(arrEnemy[i].getX(), arrEnemy[i].getY());
                 glTexCoord2d(0, 1); glVertex2d(arrEnemy[i].getX(), arrEnemy[i].getY() + 64);
                 glTexCoord2d(1, 1); glVertex2d(arrEnemy[i].getX() + 64, arrEnemy[i].getY() + 64);
                 glTexCoord2d(1, 0); glVertex2d(arrEnemy[i].getX() + 64, arrEnemy[i].getY());
+            }else{
+                glTexCoord2d(1, 0); glVertex2d(arrEnemy[i].getX(), arrEnemy[i].getY());
+                glTexCoord2d(1, 1); glVertex2d(arrEnemy[i].getX(), arrEnemy[i].getY() + 64);
+                glTexCoord2d(0, 1); glVertex2d(arrEnemy[i].getX() + 64, arrEnemy[i].getY() + 64);
+                glTexCoord2d(0, 0); glVertex2d(arrEnemy[i].getX() + 64, arrEnemy[i].getY());
+            }
             glEnd ();
         }
     }
 
-    for (int i = 0;i < arrBlockSize; i++){//враги
-            glBindTexture(GL_TEXTURE_2D, mushroom);
+    for (int i = 0;i < arrBlockSize; i++){//блоки
+            glBindTexture(GL_TEXTURE_2D, block);
             glBegin (GL_POLYGON);
                 glTexCoord2d(0, 0); glVertex2d(arrBlock[i].getX(), arrBlock[i].getY());
                 glTexCoord2d(0, 1); glVertex2d(arrBlock[i].getX(), arrBlock[i].getY() + 64);
@@ -223,13 +237,33 @@ void Draw (){
             glEnd ();
     }
 
+    glBindTexture(GL_TEXTURE_2D, castle1);
+    glBegin (GL_POLYGON);
+        glTexCoord2d(0, 0); glVertex2d(castle[0].getX(), castle[0].getY());
+        glTexCoord2d(0, 1); glVertex2d(castle[0].getX(), castle[0].getY() + 512);
+        glTexCoord2d(1, 1); glVertex2d(castle[0].getX() + 512, castle[0].getY() + 512);
+        glTexCoord2d(1, 0); glVertex2d(castle[0].getX() + 512, castle[0].getY());
+    glEnd ();
+
     Textout("HEALTH: ", 50, winHei - 150, 1.0, 1.0, 0.5); //счетчики
     Textout(itoa (healthCount), 150, winHei - 150, 1.0, 1.0, 0.5);
     Textout("COINS: ", winWid - 200, winHei - 150, 1.0, 1.0, 0.5);
     Textout(itoa (coinCounter), winWid - 100, winHei - 150, 1.0, 1.0, 0.5);
-
+    }else{
+        glDisable(GL_TEXTURE_2D);
+        glClearColor(0.5, 0.5, 0.5, 0.0);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glBegin (GL_POLYGON);
+            glVertex2d(0, 0);
+            glVertex2d(winWid, 0);
+            glVertex2d(winWid, winHei);
+            glVertex2d(0, winHei);
+        glEnd ();
+        Textout("GAME OVER", winWid/2, winHei/2, 1.0, 1.0, 0.5);
+    }
     glPopMatrix();
     glutSwapBuffers();//конец кадра и выброс в буфер
+
 }
 
 void Timer (int){
@@ -247,11 +281,7 @@ void Timer (int){
     if (jumpCount >= 250 && gravitation () == true){
         goUp -= 10;
     }
-    if (pick () == true){
-        jumpCount = 250; // прекращаем прыжок
 
-        //goUp += distancemario2pipe;  //не работает, подпрыгивание прямо под бокс
-    }
     takeCoin();
     if (coinCount >= 39){
         coinCount = 0;
@@ -262,6 +292,9 @@ void Timer (int){
     }
     kill();
     glutTimerFunc(30, Timer, 0);
+    if (enemyWayCount++ >= 25){
+        enemyWayCount = 0;
+    }
 }
 
 void Intialize (){
@@ -297,6 +330,9 @@ int main(int argc, char *argv[]){
     if(LoadTexture((char *)"coin24_4.bmp", coin4) != 1){printf("Не удалось загрузить изображение\n");}
     if(LoadTexture((char *)"question24.bmp", question) != 1){printf("Не удалось загрузить изображение\n");}
     if(LoadTexture((char *)"mushroom24.bmp", mushroom) != 1){printf("Не удалось загрузить изображение\n");}
+    if(LoadTexture((char *)"enemy24.bmp", enemy1) != 1){printf("Не удалось загрузить изображение\n");}
+    if(LoadTexture((char *)"castle24.bmp", castle1) != 1){printf("Не удалось загрузить изображение\n");}
+    if(LoadTexture((char *)"block24.bmp", block) != 1){printf("Не удалось загрузить изображение\n");}
 
     glutMainLoop();
     return 0;
